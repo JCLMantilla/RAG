@@ -1,0 +1,9 @@
+FROM python:3.10
+
+WORKDIR /code
+
+COPY ./requirements_indexer.txt /code/requirements_indexer.txt
+RUN pip install --no-cache-dir --upgrade -r /code/requirements_indexer.txt
+COPY ./app_indexer /code/app_indexer
+
+CMD ["uvicorn", "app_indexer.main:app", "--host", "0.0.0.0", "--port", "270"]
