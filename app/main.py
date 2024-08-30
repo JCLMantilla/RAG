@@ -75,7 +75,7 @@ async def get_top_k_articles(request:Request, topk:int, collection_name : str, r
     # We prepare search parameters for vector similarity search
     start = time.time()
     search_params = {
-                "metric_type": "IP", # We select inner product as our metric
+                "metric_type": "COSINE", # We select cosine similarity for the search
                 }
 
     logging.info(f" Performing top_{topk} on {n_questions} questions")
@@ -199,8 +199,8 @@ async def embedding_insert(request : Request, collection_name : str, upsert: boo
             # TODO: Is this really necessary??
             [item for item in json_out["flattened_indexes"]],
             json_out["flattened_indexes_ranges"],
-            json_out["embeddings"],
-            [1 for item in json_out["flattened_indexes"]] # Save the index
+            json_out["embeddings"]
+            #[1 for item in json_out["flattened_indexes"]] # Save the index WHY IS THIS HERE?
         ]
         successful_embeddings = json_out['successful_embeddings']
         unsuccessful_embeddings = json_out['unsuccessful_embeddings']
@@ -250,7 +250,7 @@ async def create_collection(collection_name : str):
             FieldSchema(name="id", dtype=DataType.INT64, is_primary=True, auto_id=True),
             FieldSchema(name="document_id", dtype=DataType.VARCHAR, max_length=255), 
             FieldSchema(name="index_range", dtype=DataType.VARCHAR, max_length=255),
-            FieldSchema(name="embeddings", dtype=DataType.FLOAT_VECTOR, dim=384),
+            FieldSchema(name="embeddings", dtype=DataType.FLOAT_VECTOR, dim=1536),
             FieldSchema(name="embeddings_version", dtype=DataType.INT64, max_length=255)
 
             ]

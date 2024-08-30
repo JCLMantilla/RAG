@@ -37,7 +37,7 @@ def get_connection():
 def get_paper_content(id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute(f"SELECT distinct content FROM papers_content WHERE document_id = '{id}'")
+    cursor.execute(f"SELECT distinct content FROM documents_content WHERE document_id = '{id}'")
     result = cursor.fetchone()
 
     cursor.close()
@@ -51,9 +51,9 @@ def get_all_paper_contents(ids):
     cursor = conn.cursor()
     # we need this if statement to prentent writing a the touple as ('id',) which will rise a syntax error
     if len(ids) == 1:
-        query = f"""SELECT document_id, content FROM papers_content WHERE document_id = '{ids[0]}' """
+        query = f"""SELECT document_id, content FROM documents_content WHERE document_id = '{ids[0]}' """
     else:
-        query = f"SELECT document_id, content FROM papers_content WHERE document_id IN {tuple(ids)}"
+        query = f"SELECT document_id, content FROM documents_content WHERE document_id IN {tuple(ids)}"
     cursor.execute(query)
 
     result = cursor.fetchall()

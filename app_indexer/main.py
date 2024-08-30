@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from app_indexer.helperfunctions import *
 import nltk
-
+import openai
 from fastapi.middleware.cors import CORSMiddleware
 
 import dotenv
@@ -78,7 +78,19 @@ async def embed_articles(request: Request):
     # Launch embedding and transform output to python list so that it can be handle by FastAPI
     print(f"info: Embedding {len(flattened)} chunks of text from {len(retrieved_ids)} articles")
     start = time.time()
-    embeddings = model.encode(flattened).tolist()  #
+
+
+    ################################################################
+    # TODO: implement embeddings from open IA
+    # embeddings = model.encode(flattened).tolist()  # previouse model embeddings
+    ################################################################
+    api_key = os.environ.get("OPENAI_API_KEY")
+
+    client = openai.OpenAI(api_key=api_key)
+    embeddings = client.embeddings.create(input = flattened, model="text-embedding-3-small").data
+    embeddings = [x.embedding for x in embeddings]
+
+    ################################################################
     end = time.time()
 
     print(f"info: It took {end - start} seconds to perform the embeddings")
@@ -113,7 +125,11 @@ async def embed_sentences(request: Request):
 
     print(f"info: Embedding {len(sentences)} sentences")
     start = time.time()
-    embeddings = model.encode(sentences).tolist()
+    api_key = os.environ.get("OPENAI_API_KEY")
+
+    client = openai.OpenAI(api_key=api_key)
+    embeddings = client.embeddings.create(input = sentences, model="text-embedding-3-small").data
+    embeddings = [x.embedding for x in embeddings]
     end = time.time()
 
     print(f"info: It took {end - start} seconds to perform the embeddings")
